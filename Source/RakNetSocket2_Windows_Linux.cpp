@@ -82,7 +82,8 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 
 	if ( phe == 0 )
 	{
-		RakAssert(phe!=0);
+		//apparently, gethostbyname doesn't work on ios & mac
+		//RakAssert(phe!=0);
 		return ;
 	}
 	for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
