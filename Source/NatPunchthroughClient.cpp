@@ -854,10 +854,19 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 		RakNet::Time clockDifferential = rakPeerInterface->GetClockDifferential(sp.facilitator);
 		RakNet::Time serverTime = RakNet::GetTime() + clockDifferential;
 
+#if __GET_TIME_64BIT
+#ifdef _WIN32
+#	define TIME_FORMAT "%I64d"
+#else
+#	define TIME_FORMAT "%llu"
+#endif
+#else//__GET_TIME_64BIT
+#	define TIME_FORMAT "%u"
+#endif//__GET_TIME_64BIT
 		if (oobId==ID_NAT_ESTABLISH_UNIDIRECTIONAL)
-			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("%I64d: %s: OOB ID_NAT_ESTABLISH_UNIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
+			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString(TIME_FORMAT ": %s: OOB ID_NAT_ESTABLISH_UNIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
 		else
-			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("%I64d: %s: OOB ID_NAT_ESTABLISH_BIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
+			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString(TIME_FORMAT ": %s: OOB ID_NAT_ESTABLISH_BIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
 	}
 }
 void NatPunchthroughClient::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
