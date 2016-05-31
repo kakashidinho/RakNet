@@ -42,7 +42,6 @@ void RNS2_Berkley::SetSocketOptions(void)
 	sock_opt=1024*16;
 	r = setsockopt__( rns2Socket, SOL_SOCKET, SO_SNDBUF, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 	RakAssert(r==0);
-
 }
 
 void RNS2_Berkley::SetNonBlockingSocket(unsigned long nonblocking)
@@ -201,7 +200,14 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4( RNS2_BerkleyBindParameters *bindPar
 
 
 
-
+	//LHQ: enable socket port reuse
+#if RAKNET_ENABLE_SOCKET_ADDR_PORT_REUSE
+	int _sock_reuse_opt = 1;
+	setsockopt__(rns2Socket, SOL_SOCKET, SO_REUSEADDR, (const char*)&_sock_reuse_opt, sizeof _sock_reuse_opt);
+#ifdef SO_REUSEPORT
+	setsockopt__(rns2Socket, SOL_SOCKET, SO_REUSEPORT, (const char*)&_sock_reuse_opt, sizeof _sock_reuse_opt);
+#endif
+#endif//RAKNET_ENABLE_SOCKET_ADDR_PORT_REUSE
 
 	// bind our name to the socket
 	ret = bind__( rns2Socket, ( struct sockaddr * ) &boundAddress.address.addr4, sizeof( boundAddress.address.addr4 ) );
